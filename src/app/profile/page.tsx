@@ -1,33 +1,33 @@
 "use client";
 
-import axios from "axios";
 import { useEffect, useState } from "react";
-import PrivateRoute from "../_components/PrivateRoute";
+import axiosInstance, { accessToken} from "@/utils/middleware";
+import { auth } from "@/utils/auth";
 
 type ProfileDetails = {
   id: string;
   name: string;
   email: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export default function page() {
-  const accessToken = window.localStorage.getItem("accessToken");
+  auth();
   const [details, setDetails] = useState<ProfileDetails>();
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit() {
     setLoading(true);
-    const data = await axios.get(
-      "https://demo-auth.shafiulislam20.workers.dev/profile",
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const data = await axiosInstance.get("/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
     setDetails(data.data);
+    console.log(data.data);
     setLoading(false);
   }
 
@@ -37,18 +37,71 @@ export default function page() {
 
   return (
     <>
-      <PrivateRoute>
-        <h1>profile</h1>
+      <div className="flex flex-col items-center justify-center min-h-screen ">
         {loading ? (
-          <>Loading...</>
-        ) : (
           <>
-            {details?.email}
-            {details?.id}
-            {details?.name}
+            <div className="w-32 h-32">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                <circle
+                  fill="none"
+                  stroke-opacity="1"
+                  stroke="#4f46e5"
+                  stroke-width=".5"
+                  cx="100"
+                  cy="100"
+                  r="0">
+                  <animate
+                    attributeName="r"
+                    calcMode="spline"
+                    dur="2"
+                    values="1;80"
+                    keyTimes="0;1"
+                    keySplines="0 .2 .5 1"
+                    repeatCount="indefinite"></animate>
+                  <animate
+                    attributeName="stroke-width"
+                    calcMode="spline"
+                    dur="2"
+                    values="0;25"
+                    keyTimes="0;1"
+                    keySplines="0 .2 .5 1"
+                    repeatCount="indefinite"></animate>
+                  <animate
+                    attributeName="stroke-opacity"
+                    calcMode="spline"
+                    dur="2"
+                    values="1;0"
+                    keyTimes="0;1"
+                    keySplines="0 .2 .5 1"
+                    repeatCount="indefinite"></animate>
+                </circle>
+              </svg>
+            </div>
           </>
+        ) : (
+          <div className="lg:min-w-96 max-w-sm mx-auto p-6 rounded-2xl border border-gray-200">
+            <div className="text-center">
+              <div className="w-24 h-24 mx-auto rounded-full bg-gray-200 flex items-center justify-center text-3xl font-bold text-gray-500">
+                {details?.name}
+              </div>
+              <h2 className="mt-4 text-xl font-semibold text-gray-800">
+                {details?.name}
+              </h2>
+              <p className="text-sm text-gray-600">{details?.email}</p>
+            </div>
+            <div className="mt-6 text-sm text-gray-700">
+              <p>
+                <span className="font-medium">Created:</span>{" "}
+                {details?.createdAt}
+              </p>
+              <p>
+                <span className="font-medium">Updated:</span>{" "}
+                {details?.createdAt}
+              </p>
+            </div>
+          </div>
         )}
-      </PrivateRoute>
+      </div>
     </>
   );
 }

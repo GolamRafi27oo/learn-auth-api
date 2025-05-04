@@ -3,13 +3,17 @@
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter
+import { accessToken } from "@/utils/middleware";
 
 export default function page() {
-
+  const router = useRouter(); // Initialize useRouter
+  const [login, setLogin] = useState(true);
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
   });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(credentials);
@@ -21,17 +25,25 @@ export default function page() {
           password: credentials.password,
         }
       );
-      window.localStorage.setItem("accessToken", response.data.accessToken);
-      window.localStorage.setItem("refreshToken", response.data.refreshToken);
+      localStorage.setItem("accessToken", response.data.accessToken);
+      localStorage.setItem("refreshToken", response.data.refreshToken);
 
+      // Redirect to profile page after successful login
+      setLogin(true);
+      router.push("/profile");
     } catch (error) {
+      setLogin(false);
       console.error("Error during login:", error);
     }
   };
 
+  if (accessToken) {
+    router.push("/profile");
+  }
+
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+      <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             alt="Your Company"
@@ -44,6 +56,11 @@ export default function page() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          {!login && (
+            <div className="bg-red-100 px-3 py-1.5 rounded-md my-2 translate-all duration-300 ease-in-out">
+              Wrong Email or Password!
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
