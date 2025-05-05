@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axiosInstance, { accessToken} from "@/utils/middleware";
+import axiosInstance, { accessToken } from "@/utils/middleware";
 import { auth } from "@/utils/auth";
 
 type ProfileDetails = {
@@ -19,12 +19,7 @@ export default function page() {
 
   async function handleSubmit() {
     setLoading(true);
-    const data = await axiosInstance.get("/profile", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const data = await axiosInstance.get("/profile");
 
     setDetails(data.data);
     console.log(data.data);
@@ -38,7 +33,7 @@ export default function page() {
   return (
     <>
       <div className="flex flex-col items-center justify-center min-h-screen ">
-        {loading ? (
+        {!accessToken || loading ? (
           <>
             <div className="w-32 h-32">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
@@ -81,8 +76,11 @@ export default function page() {
         ) : (
           <div className="lg:min-w-96 max-w-sm mx-auto p-6 rounded-2xl border border-gray-200">
             <div className="text-center">
-              <div className="w-24 h-24 mx-auto rounded-full bg-gray-200 flex items-center justify-center text-3xl font-bold text-gray-500">
-                {details?.name}
+              <div className="overflow-hidden w-24 h-24 mx-auto rounded-full bg-gray-200 flex items-center justify-center text-3xl font-bold text-gray-500">
+                <img
+                  src="https://img.freepik.com/premium-vector/man-professional-business-casual-young-avatar-icon-illustration_1277826-622.jpg?semt=ais_hybrid&w=740"
+                  alt="avatar"
+                />
               </div>
               <h2 className="mt-4 text-xl font-semibold text-gray-800">
                 {details?.name}
@@ -92,11 +90,13 @@ export default function page() {
             <div className="mt-6 text-sm text-gray-700">
               <p>
                 <span className="font-medium">Created:</span>{" "}
-                {details?.createdAt}
+                {details?.createdAt &&
+                  new Date(details.createdAt).toLocaleString()}
               </p>
               <p>
                 <span className="font-medium">Updated:</span>{" "}
-                {details?.createdAt}
+                {details?.updatedAt &&
+                  new Date(details.updatedAt).toLocaleString()}
               </p>
             </div>
           </div>

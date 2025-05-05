@@ -1,7 +1,10 @@
+import { useRouter } from "next/navigation";
 import { accessToken } from "./middleware";
 
 export const auth = () => {
+  const router = useRouter(); // Initialize useRouter
+
   if (!accessToken) {
-    window.location.href = "/login"; // Redirect to login page
-  }
+    router.push("/login"); // Redirect to login page
+  } // Add accessToken and router as dependencies
 };

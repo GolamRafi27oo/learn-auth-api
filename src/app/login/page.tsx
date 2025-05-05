@@ -1,10 +1,9 @@
 "use client";
 
-import axios from "axios";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter
-import { accessToken } from "@/utils/middleware";
+import axiosInstance, { accessToken } from "@/utils/middleware";
 
 export default function page() {
   const router = useRouter(); // Initialize useRouter
@@ -18,28 +17,26 @@ export default function page() {
     e.preventDefault();
     console.log(credentials);
     try {
-      const response = await axios.post(
-        "https://demo-auth.shafiulislam20.workers.dev/auth/login",
-        {
-          email: credentials.email,
-          password: credentials.password,
-        }
-      );
-      localStorage.setItem("accessToken", response.data.accessToken);
-      localStorage.setItem("refreshToken", response.data.refreshToken);
+      const response = await axiosInstance.post("/auth/login", {
+        email: credentials.email,
+        password: credentials.password,
+      });
+      await localStorage.setItem("accessToken", response.data.accessToken);
+      await localStorage.setItem("refreshToken", response.data.refreshToken);
 
       // Redirect to profile page after successful login
+      // setTimeout(() => {
+      //   router.push("/profile");
+      // }, 0);
+
+      window.location.href = "/profile";
+
       setLogin(true);
-      router.push("/profile");
     } catch (error) {
       setLogin(false);
       console.error("Error during login:", error);
     }
   };
-
-  if (accessToken) {
-    router.push("/profile");
-  }
 
   return (
     <>

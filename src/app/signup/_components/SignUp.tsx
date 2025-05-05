@@ -1,7 +1,42 @@
+"use client";
+
+import axiosInstance from "@/utils/middleware";
+import axios from "axios";
+import { useState } from "react";
+
 export default function SignUp() {
+  const [credentials, setCredentials] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [user, setUser] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [bgColor, setBgColor] = useState("bg-red-100");
+
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log(credentials);
+    e.preventDefault();
+    try {
+      const response = await axiosInstance.post("/auth/signup", credentials);
+      setErrorMsg("Success");
+      setBgColor("bg-green-100");
+      setUser(true);
+      window.location.href = "/login";
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setErrorMsg("User with this email already exists");
+        setUser(true);
+        console.error("Axios error:", error.response?.data || error.message);
+      } else {
+        console.error("400 Unexpected error:", error);
+        setErrorMsg("Unexpected error! Please try again.");
+      }
+    }
+  };
+
   return (
     <>
-
       <div className="mt-16 flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
@@ -15,8 +50,14 @@ export default function SignUp() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" className="space-y-6">
-          <div>
+          {user && (
+            <div
+              className={`${bgColor} px-3 py-1.5 rounded-md my-2 translate-all duration-300 ease-in-out`}>
+              {errorMsg}
+            </div>
+          )}
+          <form onSubmit={handleSignUp} method="POST" className="space-y-6">
+            <div>
               <label
                 htmlFor="name"
                 className="block text-sm/6 font-medium text-gray-900">
@@ -24,6 +65,9 @@ export default function SignUp() {
               </label>
               <div className="mt-2">
                 <input
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, name: e.target.value })
+                  }
                   id="name"
                   name="name"
                   type="name"
@@ -41,6 +85,9 @@ export default function SignUp() {
               </label>
               <div className="mt-2">
                 <input
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, email: e.target.value })
+                  }
                   id="email"
                   name="email"
                   type="email"
@@ -61,6 +108,9 @@ export default function SignUp() {
               </div>
               <div className="mt-2">
                 <input
+                  onChange={(e) =>
+                    setCredentials({ ...credentials, password: e.target.value })
+                  }
                   id="password"
                   name="password"
                   type="password"

@@ -1,17 +1,28 @@
 "use client";
 
-import { accessToken } from "@/utils/middleware";
+import axiosInstance, { accessToken } from "@/utils/middleware";
 import Link from "next/link";
 
 export default function Navbar() {
-  console.log(accessToken);
+  const handleLogOut = async () => {
+    try {
+      // Make the logout API call
+      const response = await axiosInstance.post("/auth/logout");
+      console.log(response);
+      window.localStorage.clear();
+      // Redirect to the login page
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
   return (
     <>
       <nav className="fixed top-0 w-full border border-gray-200 p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-gray-800 text-lg font-bold">My App</div>
           <ul className="flex space-x-4">
-          <li>
+            <li>
               <Link href="/" className=" hover:text-gray-300">
                 Home
               </Link>
@@ -29,9 +40,11 @@ export default function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <a href="/logout" className=" hover:text-gray-300">
+                  <button
+                    onClick={() => handleLogOut()}
+                    className=" hover:text-gray-300">
                     Logout
-                  </a>
+                  </button>
                 </li>
               </>
             ) : (

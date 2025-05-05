@@ -9,7 +9,6 @@ export const axiosInstance = axios.create({
 export const accessToken = localStorage.getItem("accessToken");
 export const refreshToken = localStorage.getItem("refreshToken");
 
-
 axiosInstance.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("accessToken");
@@ -38,7 +37,8 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         // Redirect to login if token refresh fails
-        window.location.href = "/login";
+        // window.location.href = "/login";
+        console.log("error")
       }
     }
     return Promise.reject(error);
