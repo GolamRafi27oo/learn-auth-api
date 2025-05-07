@@ -5,11 +5,13 @@ import { useEffect, useState } from 'react';
 import axiosInstance from '@/utils/http-client';
 import { setAccessToken, setRefreshToken } from '@/service/localstorage.service';
 import { auth } from '@/utils/auth';
+import axios from 'axios';
 
 export default function page() {
   auth();
-  const [login, setLogin] = useState(Boolean);
-  const [status, setStatus] = useState(Number);
+  const [isLogin, setIsLogin] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string>('status');
   const [credentials, setCredentials] = useState({
     email: '',
     password: '',
@@ -23,20 +25,25 @@ export default function page() {
         email: credentials.email,
         password: credentials.password,
       });
-      setLogin(true);
       await setAccessToken(response.data.accessToken);
       await setRefreshToken(response.data.refreshToken);
-      setStatus(response.status);
+      setIsLogin(true);
     } catch (error) {
-      console.error('Error during login:', error);
+      setIsError(true);
+      if (axios.isAxiosError(error)) {
+        setErrorMsg('Invalid email or password');
+        console.error('Axios error:', error.response?.data || error.message);
+      } else {
+        setErrorMsg('Unexpected error! Please try again.');
+      }
     }
   };
 
   useEffect(() => {
-    if (login === true) {
+    if (isLogin === true) {
       window.location.href = '/profile';
     }
-  }, [login, status]);
+  }, [isLogin]);
 
   return (
     <>
@@ -53,9 +60,9 @@ export default function page() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          {!login && (
+          {isError && (
             <div className="bg-red-100 px-3 py-1.5 rounded-md my-2 translate-all duration-300 ease-in-out">
-              {status}
+              {errorMsg}
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-6">

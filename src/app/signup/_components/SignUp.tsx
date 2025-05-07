@@ -1,47 +1,42 @@
-"use client";
+'use client';
 
-import axiosInstance from "@/utils/http-client";
-import axios from "axios";
-import { redirect } from "next/navigation";
-import { useState } from "react";
+import axiosInstance from '@/utils/http-client';
+import axios from 'axios';
+import { redirect } from 'next/navigation';
+import { useState } from 'react';
 
 export default function SignUp() {
   const [credentials, setCredentials] = useState({
-    name: "",
-    email: "",
-    password: "",
+    name: '',
+    email: '',
+    password: '',
   });
   const [user, setUser] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [bgColor, setBgColor] = useState("bg-red-100");
-
-  
+  const [errorMsg, setErrorMsg] = useState('');
+  const [bgColor, setBgColor] = useState('bg-red-100');
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     console.log(credentials);
     e.preventDefault();
     try {
-      const response = await axiosInstance.post("/auth/signup", credentials);
-      setErrorMsg("Success");
-      setBgColor("bg-green-100");
+      const response = await axiosInstance.post('/auth/signup', credentials);
+      setErrorMsg('Success');
+      setBgColor('bg-green-100');
       setUser(true);
-      window.location.href = "/login";
+      window.location.href = '/login';
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setErrorMsg("User with this email already exists");
+        setErrorMsg('User with this email already exists');
         setUser(true);
-        console.error("Axios error:", error.response?.data || error.message);
+        console.error('Axios error:', error.response?.data || error.message);
       } else {
-        console.error("400 Unexpected error:", error);
-        setErrorMsg("Unexpected error! Please try again.");
+        console.error('400 Unexpected error:', error);
+        setErrorMsg('Unexpected error! Please try again.');
       }
     }
   };
 
-
-
   return (
-  
     <>
       <div className="mt-16 flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -58,22 +53,19 @@ export default function SignUp() {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           {user && (
             <div
-              className={`${bgColor} px-3 py-1.5 rounded-md my-2 translate-all duration-300 ease-in-out`}>
+              className={`${bgColor} px-3 py-1.5 rounded-md my-2 translate-all duration-300 ease-in-out`}
+            >
               {errorMsg}
             </div>
           )}
           <form onSubmit={handleSignUp} method="POST" className="space-y-6">
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm/6 font-medium text-gray-900">
+              <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
                 Name
               </label>
               <div className="mt-2">
                 <input
-                  onChange={(e) =>
-                    setCredentials({ ...credentials, name: e.target.value })
-                  }
+                  onChange={(e) => setCredentials({ ...credentials, name: e.target.value })}
                   id="name"
                   name="name"
                   type="name"
@@ -84,16 +76,12 @@ export default function SignUp() {
               </div>
             </div>
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm/6 font-medium text-gray-900">
+              <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                 Email address
               </label>
               <div className="mt-2">
                 <input
-                  onChange={(e) =>
-                    setCredentials({ ...credentials, email: e.target.value })
-                  }
+                  onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                   id="email"
                   name="email"
                   type="email"
@@ -106,17 +94,13 @@ export default function SignUp() {
 
             <div>
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password"
-                  className="block text-sm/6 font-medium text-gray-900">
+                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
                   Password
                 </label>
               </div>
               <div className="mt-2">
                 <input
-                  onChange={(e) =>
-                    setCredentials({ ...credentials, password: e.target.value })
-                  }
+                  onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                   id="password"
                   name="password"
                   type="password"
@@ -130,7 +114,8 @@ export default function SignUp() {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
                 Sign in
               </button>
             </div>
