@@ -1,3 +1,5 @@
+"use client";
+
 import axios from "axios";
 
 export const axiosInstance = axios.create({
@@ -6,8 +8,10 @@ export const axiosInstance = axios.create({
 });
 
 // Function to check access token and redirect if missing
+
 export const accessToken = localStorage.getItem("accessToken");
 export const refreshToken = localStorage.getItem("refreshToken");
+
 
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -27,18 +31,27 @@ axiosInstance.interceptors.response.use(
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const { data } = await axiosInstance.post("/auth/refresh-token", {
-          token: refreshToken,
-        });
-        localStorage.setItem("accessToken", data.accessToken);
+        const res = await axios.post(
+          "https://demo-auth.shafiulislam20.workers.dev/auth/refresh-token",
+          {
+            token: refreshToken,
+          }
+        );
+
+        if (res.status === 401) {
+          window.location.href = "/login";
+          return;
+        }
+
+        localStorage.setItem("accessToken", res.data.accessToken);
         axiosInstance.defaults.headers.common[
           "Authorization"
-        ] = `Bearer ${data.accessToken}`;
+        ] = `Bearer ${res.data.accessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         // Redirect to login if token refresh fails
         // window.location.href = "/login";
-        console.log("error")
+        console.log("error");
       }
     }
     return Promise.reject(error);

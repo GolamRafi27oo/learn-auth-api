@@ -1,6 +1,6 @@
 "use client";
 
-import axiosInstance from "@/utils/middleware";
+import axiosInstance from "@/utils/http-client";
 import axios from "axios";
 import { useState } from "react";
 

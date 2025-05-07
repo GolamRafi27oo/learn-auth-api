@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import axiosInstance, { accessToken } from "@/utils/middleware";
-import { auth } from "@/utils/auth";
+import { useEffect, useState } from 'react';
+import axiosInstance from '@/utils/http-client';
+import { auth } from '@/utils/auth';
 
 type ProfileDetails = {
   id: string;
@@ -17,23 +17,21 @@ export default function page() {
   const [details, setDetails] = useState<ProfileDetails>();
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit() {
-    setLoading(true);
-    const data = await axiosInstance.get("/profile");
-
-    setDetails(data.data);
-    console.log(data.data);
-    setLoading(false);
-  }
-
   useEffect(() => {
-    handleSubmit();
+    async function handleProfile() {
+      setLoading(true);
+      const data = await axiosInstance.get('/profile');
+      setDetails(data.data);
+      console.log(data.data);
+      setLoading(false);
+    }
+    handleProfile();
   }, []);
 
   return (
     <>
       <div className="flex flex-col items-center justify-center min-h-screen ">
-        {!accessToken || loading ? (
+        {loading ? (
           <>
             <div className="w-32 h-32">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
@@ -44,7 +42,8 @@ export default function page() {
                   stroke-width=".5"
                   cx="100"
                   cy="100"
-                  r="0">
+                  r="0"
+                >
                   <animate
                     attributeName="r"
                     calcMode="spline"
@@ -52,7 +51,8 @@ export default function page() {
                     values="1;80"
                     keyTimes="0;1"
                     keySplines="0 .2 .5 1"
-                    repeatCount="indefinite"></animate>
+                    repeatCount="indefinite"
+                  ></animate>
                   <animate
                     attributeName="stroke-width"
                     calcMode="spline"
@@ -60,7 +60,8 @@ export default function page() {
                     values="0;25"
                     keyTimes="0;1"
                     keySplines="0 .2 .5 1"
-                    repeatCount="indefinite"></animate>
+                    repeatCount="indefinite"
+                  ></animate>
                   <animate
                     attributeName="stroke-opacity"
                     calcMode="spline"
@@ -68,7 +69,8 @@ export default function page() {
                     values="1;0"
                     keyTimes="0;1"
                     keySplines="0 .2 .5 1"
-                    repeatCount="indefinite"></animate>
+                    repeatCount="indefinite"
+                  ></animate>
                 </circle>
               </svg>
             </div>
@@ -82,21 +84,17 @@ export default function page() {
                   alt="avatar"
                 />
               </div>
-              <h2 className="mt-4 text-xl font-semibold text-gray-800">
-                {details?.name}
-              </h2>
+              <h2 className="mt-4 text-xl font-semibold text-gray-800">{details?.name}</h2>
               <p className="text-sm text-gray-600">{details?.email}</p>
             </div>
             <div className="mt-6 text-sm text-gray-700">
               <p>
-                <span className="font-medium">Created:</span>{" "}
-                {details?.createdAt &&
-                  new Date(details.createdAt).toLocaleString()}
+                <span className="font-medium">Created:</span>{' '}
+                {details?.createdAt && new Date(details.createdAt).toLocaleString()}
               </p>
               <p>
-                <span className="font-medium">Updated:</span>{" "}
-                {details?.updatedAt &&
-                  new Date(details.updatedAt).toLocaleString()}
+                <span className="font-medium">Updated:</span>{' '}
+                {details?.updatedAt && new Date(details.updatedAt).toLocaleString()}
               </p>
             </div>
           </div>

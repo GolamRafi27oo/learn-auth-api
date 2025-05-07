@@ -1,43 +1,43 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter
-import axiosInstance, { accessToken } from "@/utils/middleware";
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { redirect, useRouter } from 'next/navigation'; // Import useRouter
+import axiosInstance from '@/utils/http-client';
+import { setAccessToken, setRefreshToken } from '@/service/localstorage.service';
+import { auth } from '@/utils/auth';
 
 export default function page() {
-  const router = useRouter(); // Initialize useRouter
-  const [login, setLogin] = useState(true);
+  auth();
+  const [login, setLogin] = useState(Boolean);
   const [credentials, setCredentials] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(credentials);
     try {
-      const response = await axiosInstance.post("/auth/login", {
+      const response = await axiosInstance.post('/auth/login', {
         email: credentials.email,
         password: credentials.password,
       });
-      await localStorage.setItem("accessToken", response.data.accessToken);
-      await localStorage.setItem("refreshToken", response.data.refreshToken);
-
-      // Redirect to profile page after successful login
-      // setTimeout(() => {
-      //   router.push("/profile");
-      // }, 0);
-
-      window.location.href = "/profile";
-
       setLogin(true);
+      await setAccessToken(response.data.accessToken);
+      await setRefreshToken(response.data.refreshToken);
+
     } catch (error) {
       setLogin(false);
-      console.error("Error during login:", error);
+      console.error('Error during login:', error);
     }
   };
 
+  useEffect(() => {
+    if (login === true) {
+      redirect('/profile');
+    }
+  }, [login]);
   return (
     <>
       <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -53,23 +53,19 @@ export default function page() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          {!login && (
+          {/* {!login && (
             <div className="bg-red-100 px-3 py-1.5 rounded-md my-2 translate-all duration-300 ease-in-out">
               Wrong Email or Password!
             </div>
-          )}
+          )} */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm/6 font-medium text-gray-900">
+              <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                 Email address
               </label>
               <div className="mt-2">
                 <input
-                  onChange={(e) =>
-                    setCredentials({ ...credentials, email: e.target.value })
-                  }
+                  onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
                   id="email"
                   name="email"
                   type="email"
@@ -81,9 +77,7 @@ export default function page() {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm/6 font-medium text-gray-900">
+              <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
                 Password
               </label>
               <div className="mt-2">
@@ -107,16 +101,15 @@ export default function page() {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
                 Sign in
               </button>
             </div>
           </form>
           <p className="mt-10 text-center text-sm/6 text-gray-500">
-            Not a member?{" "}
-            <Link
-              href={"/signup"}
-              className="font-semibold text-indigo-600 hover:text-indigo-500">
+            Not a member?{' '}
+            <Link href={'/signup'} className="font-semibold text-indigo-600 hover:text-indigo-500">
               Sign Up
             </Link>
           </p>

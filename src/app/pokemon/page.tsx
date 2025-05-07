@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import axiosInstance, { accessToken } from "@/utils/middleware";
 import { auth } from "@/utils/auth";
+import axiosInstance from "@/utils/http-client";
 
 type PokemonDetails = {
   name: string;
@@ -30,7 +30,7 @@ export default function page() {
   return (
     <>
       <div className="flex flex-col items-center justify-center min-h-screen py-2">
-        {!accessToken || loading ? (
+        {!ACCESS_TOKEN || loading ? (
           <div className="w-32 h-32">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
               <circle
