@@ -2,6 +2,7 @@
 
 import axiosInstance from "@/utils/http-client";
 import axios from "axios";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 
 export default function SignUp() {
@@ -13,6 +14,8 @@ export default function SignUp() {
   const [user, setUser] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [bgColor, setBgColor] = useState("bg-red-100");
+
+  
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     console.log(credentials);
@@ -35,7 +38,10 @@ export default function SignUp() {
     }
   };
 
+
+
   return (
+  
     <>
       <div className="mt-16 flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">

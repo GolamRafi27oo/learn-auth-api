@@ -1,31 +1,31 @@
 'use client';
 
-import { getToken } from '@/service/localstorage.service';
+import { getToken, removeTokens } from '@/service/localstorage.service';
 import axiosInstance from '@/utils/http-client';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 export default function Navbar() {
+  const [token, setToken] = useState<string | null>();
+
   const handleLogOut = async () => {
     try {
       // Make the logout API call
       const response = await axiosInstance.post('/auth/logout');
       console.log(response);
-      window.localStorage.clear();
+      removeTokens() 
       // Redirect to the login page
       window.location.href = '/';
     } catch (error) {
       console.error('Error during logout:', error);
     }
   };
-  const [token, setToken] = useState<string | null>();
-
-  async function getItem() {
-    const tokenValue = await getToken();
-    setToken(tokenValue);
-  }
-
+ 
   useEffect(() => {
+    async function getItem() {
+      const token = await getToken();
+      setToken(token);
+    }
     getItem();
   }, []);
 

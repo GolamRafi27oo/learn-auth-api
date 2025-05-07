@@ -13,7 +13,7 @@ export async function getToken(): Promise<string | null> {
   return window.localStorage.getItem(ACCESS_TOKEN);
 }
 
-export function getRefreshToken(): string | null {
+export async function getRefreshToken(): Promise<string | null> {
   return localStorage.getItem(REFRESH_TOKEN);
 }
 
@@ -21,3 +21,4 @@ export function removeTokens() {
   localStorage.removeItem(ACCESS_TOKEN);
   localStorage.removeItem(REFRESH_TOKEN);
 }
+

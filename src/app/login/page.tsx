@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { redirect, useRouter } from 'next/navigation'; // Import useRouter
 import axiosInstance from '@/utils/http-client';
 import { setAccessToken, setRefreshToken } from '@/service/localstorage.service';
 import { auth } from '@/utils/auth';
@@ -10,6 +9,7 @@ import { auth } from '@/utils/auth';
 export default function page() {
   auth();
   const [login, setLogin] = useState(Boolean);
+  const [status, setStatus] = useState(Number);
   const [credentials, setCredentials] = useState({
     email: '',
     password: '',
@@ -26,18 +26,18 @@ export default function page() {
       setLogin(true);
       await setAccessToken(response.data.accessToken);
       await setRefreshToken(response.data.refreshToken);
-
+      setStatus(response.status);
     } catch (error) {
-      setLogin(false);
       console.error('Error during login:', error);
     }
   };
 
   useEffect(() => {
     if (login === true) {
-      redirect('/profile');
+      window.location.href = '/profile';
     }
-  }, [login]);
+  }, [login, status]);
+
   return (
     <>
       <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -53,11 +53,11 @@ export default function page() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          {/* {!login && (
+          {!login && (
             <div className="bg-red-100 px-3 py-1.5 rounded-md my-2 translate-all duration-300 ease-in-out">
-              Wrong Email or Password!
+              {status}
             </div>
-          )} */}
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
