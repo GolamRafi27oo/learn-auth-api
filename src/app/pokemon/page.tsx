@@ -4,11 +4,14 @@ import { auth } from '@/utils/auth';
 import axiosInstance from '@/utils/http-client';
 import { getToken } from '@/service/localstorage.service';
 import Link from 'next/link';
+import { number, string, z } from 'zod';
 
-type PokemonDetails = {
-  name: string;
-  id: number;
-};
+const PokemonSchema = z.object({
+  name: string(),
+  id: number(),
+});
+
+type PokemonDetails = z.infer<typeof PokemonSchema>;
 
 export default function page() {
   auth();
