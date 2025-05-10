@@ -2,8 +2,8 @@
 
 import axiosInstance from '@/utils/http-client';
 import axios from 'axios';
-import { redirect } from 'next/navigation';
 import { useState } from 'react';
+import { string, z } from 'zod';
 
 export default function SignUp() {
   const [credentials, setCredentials] = useState({
@@ -12,21 +12,35 @@ export default function SignUp() {
     password: '',
   });
   const [user, setUser] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('rttor');
   const [bgColor, setBgColor] = useState('bg-red-100');
 
+  const SignUpSchema = z.object({
+    name: string(),
+    email: string().email(),
+    password: string()
+      .min(6)
+      .regex(/[~!@#$%^&*]/, { message: 'Must me contain with (~ ! @ # $ % ^ & *).' }),
+  });
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     console.log(credentials);
     e.preventDefault();
+
+    const result = SignUpSchema.safeParse(credentials);
+    if (!result.success) {
+      setErrorMsg(result.error.errors[0].message);
+    }
     try {
-      const response = await axiosInstance.post('/auth/signup', credentials);
+      await axiosInstance.post('/auth/signup', credentials);
       setErrorMsg('Success');
       setBgColor('bg-green-100');
       setUser(true);
       window.location.href = '/login';
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setErrorMsg('User with this email already exists');
+        setErrorMsg(
+          !result.success ? result.error.errors[0].message : 'User with this email already exists',
+        );
         setUser(true);
         console.error('Axios error:', error.response?.data || error.message);
       } else {

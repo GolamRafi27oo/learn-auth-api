@@ -20,8 +20,9 @@ export default function page() {
   async function pokemonData() {
     setLoading(true);
     try {
-      const response = await axiosInstance.get('/pokemon?limit=100&offset=0');
+      const response = await axiosInstance.get('/pokemon?limit=10&offset=0');
       setDetails(response.data.results);
+      console.log(response.data.results[0].id)
     } catch (error) {
       console.error('Failed to fetch Pokémon list:', error);
     }
@@ -76,7 +77,7 @@ export default function page() {
             {details.map((item, index) => {
               const name = item.name;
               return (
-                <Link key={name} href={`/pokemon/${index+1}`}>
+                <Link key={name} href={`/pokemon/${details[index]}`}>
                   <div className="p-4 border rounded hover:bg-gray-100 cursor-pointer">
                     <h2 className="capitalize">{name}</h2>
                   </div>
