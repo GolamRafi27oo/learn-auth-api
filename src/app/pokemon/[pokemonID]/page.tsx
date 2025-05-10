@@ -11,7 +11,6 @@ import { useParams } from 'next/navigation';
 import axiosInstance from '@/utils/http-client';
 import { auth } from '@/utils/auth';
 import Loader, { SadPicachu } from '@/app/_components/Loader';
-import axios from 'axios';
 import Link from 'next/link';
 
 export default function page() {

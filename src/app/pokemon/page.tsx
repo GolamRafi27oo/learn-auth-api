@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 type PokemonDetails = {
   name: string;
-  url: string;
+  id: number;
 };
 
 export default function page() {
@@ -22,7 +22,6 @@ export default function page() {
     try {
       const response = await axiosInstance.get('/pokemon?limit=10&offset=0');
       setDetails(response.data.results);
-      console.log(response.data.results[0].id)
     } catch (error) {
       console.error('Failed to fetch Pokémon list:', error);
     }
@@ -75,9 +74,10 @@ export default function page() {
           <h1 className="text-3xl font-bold mb-4">Pokemon</h1>
           <div className="grid grid-cols-2 gap-4">
             {details.map((item, index) => {
+              console.log(details[index]);
               const name = item.name;
               return (
-                <Link key={name} href={`/pokemon/${details[index]}`}>
+                <Link key={index} href={`/pokemon/${details[index].id}`}>
                   <div className="p-4 border rounded hover:bg-gray-100 cursor-pointer">
                     <h2 className="capitalize">{name}</h2>
                   </div>
